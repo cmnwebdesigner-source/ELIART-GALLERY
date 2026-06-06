@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ELIART_2020 | Artă Contemporană de Biró Melinda</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="css/artworks.css">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#F4EBE1', /* Fundal mai bej / cald cum ai cerut */
+                        beige: '#E8DCC4',
+                        gold: '#C5A059',
+                        darkBrown: '#2C241B',
+                        elegantBlack: '#171614',
+                        muted: '#EBE0D3'
+                    },
+                    fontFamily: {
+                        serif: ['"Cormorant Garamond"', 'serif'],
+                        sans: ['Montserrat', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'premium': '0 10px 30px -10px rgba(44, 36, 27, 0.1)',
+                        'passepartout': '0 20px 40px -10px rgba(0, 0, 0, 0.15)'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: theme('colors.cream');
+            color: theme('colors.darkBrown');
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .tab-content {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+        }
+
+        .tab-content.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .img-placeholder {
+            background-color: theme('colors.muted');
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: theme('colors.beige');
+            font-family: theme('fontFamily.serif');
+            font-style: italic;
+        }
+
+        /* Smooth fade for loader */
+        #loader {
+            transition: opacity 0.6s ease-out, visibility 0.6s ease-out;
+        }
+        #loader.hidden-loader {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        /* Nav Link Hover */
+        .nav-link {
+            position: relative;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 1px;
+            bottom: -2px;
+            left: 0;
+            background-color: theme('colors.gold');
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after, .nav-link.active-nav::after {
+            width: 100%;
+        }
+
+        /* Mobile Menu Transitions */
+        #mobile-menu {
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #mobile-overlay {
+            transition: opacity 0.3s ease;
+        }
+
+        /* Scroll Animations */
+        .reveal-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .reveal-up.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .delay-100 { transition-delay: 100ms; }
+        .delay-200 { transition-delay: 200ms; }
+
+
+        /* Animație fină pentru poza din secțiunea Despre mine */
+        #about .lg\:col-span-5 .shadow-passepartout {
+            animation: aboutPhotoFloat 5.5s ease-in-out infinite;
+            transform-origin: center center;
+            will-change: transform, box-shadow;
+        }
+
+        #about .lg\:col-span-5 .shadow-passepartout img {
+            animation: aboutPhotoBreath 7s ease-in-out infinite;
+            will-change: transform, filter;
+        }
+
+        #about.active .lg\:col-span-5 .shadow-passepartout {
+            animation-play-state: running;
+        }
+
+        @keyframes aboutPhotoFloat {
+            0%, 100% {
+                transform: rotate(1deg) translateY(0) scale(1);
+                box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
+            }
+            50% {
+                transform: rotate(-0.6deg) translateY(-10px) scale(1.015);
+                box-shadow: 0 28px 55px -14px rgba(0, 0, 0, 0.22);
+            }
+        }
+
+        @keyframes aboutPhotoBreath {
+            0%, 100% {
+                transform: scale(1);
+                filter: contrast(1.05) saturate(1);
+            }
+            50% {
+                transform: scale(1.025);
+                filter: contrast(1.08) saturate(1.04);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            #about .lg\:col-span-5 .shadow-passepartout,
+            #about .lg\:col-span-5 .shadow-passepartout img {
+                animation: none;
+            }
+        }
+
+    </style>
+</head>
+<body class="font-sans min-h-screen flex flex-col relative overflow-x-hidden" onload="initApp()">
+
+    <!-- Loading Screen -->
+    <div id="loader" class="fixed inset-0 z-[9999] bg-cream flex flex-col items-center justify-center">
+        <img src="assets/images/logo-eliart-gallery.jpg" alt="ELIART Logo" class="h-24 w-auto mb-6 object-contain mix-blend-multiply opacity-90 animate-pulse">
+        <div class="w-24 h-px bg-beige relative overflow-hidden">
+            <div class="absolute top-0 left-0 h-full bg-gold w-full animate-[loading_1.5s_ease-in-out_infinite]"></div>
+        </div>
+        <style>
+            @keyframes loading {
+                0% { transform: translateX(-100%); }
+                100% { transform: translateX(100%); }
+            }
+    
+
+        </style>
+    </div>
+
+    <!-- Navbar -->
+    <header class="fixed top-0 left-0 right-0 z-[40] bg-cream/90 backdrop-blur-md border-b border-beige/50">
+        <div class="max-w-7xl mx-auto px-4 md:px-6 h-16 md:h-20 flex items-center justify-between">
+            <!-- Logo & Title -->
+            <button onclick="navigateTo('home')" class="flex items-center gap-2 md:gap-4 group text-left">
+                <img src="assets/images/logo-eliart-gallery.jpg" alt="ELIART_2020" class="h-9 md:h-12 lg:h-14 w-auto object-contain mix-blend-multiply transition-transform group-hover:scale-105">
+                <div class="flex flex-col justify-center border-l border-beige pl-2 md:pl-3 lg:pl-4">
+                    <span class="font-serif text-xs lg:text-sm tracking-widest uppercase text-elegantBlack group-hover:text-gold transition-colors">Biró Melinda</span>
+                    <span class="font-sans text-[7px] lg:text-[8px] tracking-[0.2em] text-darkBrown/60 uppercase mt-0.5">RM ELIART 2020 SRL</span>
+                </div>
+            </button>
+
+            <!-- Desktop Menu -->
+            <nav class="hidden xl:flex items-center gap-6 lg:gap-8 text-[11px] lg:text-xs uppercase tracking-wider font-light">
+                <button onclick="navigateTo('home')" class="nav-link">Acasă</button>
+                <button onclick="navigateTo('shop')" class="nav-link">Shop / Lucrări</button>
+                <button onclick="navigateTo('postcards')" class="nav-link">Postcards</button>
+                <button onclick="navigateTo('custom-orders')" class="nav-link">Comenzi</button>
+                <button onclick="navigateTo('services')" class="nav-link">Servicii</button>
+                <button onclick="navigateTo('about')" class="nav-link">Despre</button>
+                <button onclick="navigateTo('contact')" class="nav-link">Contact</button>
+            </nav>
+
+            <!-- Mobile Menu Toggle -->
+            <button id="hamburger-btn" class="xl:hidden text-xl md:text-2xl text-darkBrown focus:outline-none p-2" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-overlay" class="fixed inset-0 bg-elegantBlack/40 backdrop-blur-sm z-[45] hidden opacity-0" onclick="closeMobileMenu()"></div>
+
+    <!-- Mobile Menu Sidebar -->
+    <aside id="mobile-menu" class="fixed top-0 right-0 h-full w-3/4 max-w-xs bg-cream z-[50] shadow-2xl translate-x-full flex flex-col">
+        <div class="h-16 md:h-20 px-5 flex items-center justify-between border-b border-beige/50">
+            <span class="font-serif text-base md:text-lg tracking-widest uppercase">Meniu</span>
+            <button onclick="closeMobileMenu()" class="text-xl md:text-2xl text-darkBrown p-2 focus:outline-none hover:text-gold transition-colors">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <nav class="flex-1 overflow-y-auto py-6 px-5 flex flex-col gap-4 text-[15px] md:text-base font-light tracking-wide">
+            <button onclick="navigateTo('home')" class="text-left py-2 border-b border-beige/30">Acasă</button>
+            <button onclick="navigateTo('shop')" class="text-left py-2 border-b border-beige/30">Shop / Lucrări</button>
+            <button onclick="navigateTo('postcards')" class="text-left py-2 border-b border-beige/30">Postcards / Suveniruri</button>
+            <button onclick="navigateTo('custom-orders')" class="text-left py-2 border-b border-beige/30">Comenzi personalizate</button>
+            <button onclick="navigateTo('certificate')" class="text-left py-2 border-b border-beige/30">Certificat de autenticitate</button>
+            <button onclick="navigateTo('creative-camps')" class="text-left py-2 border-b border-beige/30">Tabere creative</button>
+            <button onclick="navigateTo('art-therapy')" class="text-left py-2 border-b border-beige/30">Terapie prin artă</button>
+            <button onclick="navigateTo('about')" class="text-left py-2 border-b border-beige/30">Despre artist</button>
+            <button onclick="navigateTo('contact')" class="text-left py-2">Contact</button>
+        </nav>
+    </aside>
+
+    <main class="flex-1 pt-16 md:pt-24 pb-12 md:pb-16 flex flex-col">
+        
+        <!-- ================= ACASĂ ================= -->
+        <section id="home" class="tab-content w-full flex-1 flex flex-col">
+            <div class="flex-1 flex items-center justify-center px-4 md:px-6 py-8 md:py-24 relative">
+                <!-- Background visual element -->
+                <div class="absolute inset-0 z-[-1] opacity-30 flex items-center justify-center pointer-events-none">
+                     <div class="w-[200px] h-[200px] md:w-[500px] md:h-[500px] rounded-full bg-gold/10 blur-[80px] md:blur-[100px]"></div>
+                </div>
+
+                <div class="max-w-4xl w-full text-center bg-white/60 backdrop-blur-md p-6 md:p-16 rounded-2xl md:rounded-3xl border border-white shadow-premium reveal-up">
+                    <span class="text-gold uppercase tracking-[0.3em] text-[10px] md:text-sm font-semibold mb-4 md:mb-6 block">Artist: Biró Melinda</span>
+                    <h1 class="font-serif text-4xl sm:text-5xl md:text-7xl lg:text-8xl text-elegantBlack mb-4 md:mb-6 tracking-wide">ELIART_2020</h1>
+                    <div class="italic font-serif text-xl sm:text-2xl md:text-3xl text-darkBrown/80 mb-8 md:mb-12 relative inline-block px-4">
+                        <i class="fas fa-quote-left absolute -top-3 -left-2 md:-top-4 md:-left-6 text-gold/30 text-xl md:text-2xl"></i>
+                        “Every painting begins where words end.”
+                    </div>
+                    
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6">
+                        <button onclick="navigateTo('shop')" class="w-full sm:w-auto bg-darkBrown text-cream px-8 py-3 md:px-10 md:py-4 rounded uppercase tracking-widest text-[11px] md:text-sm hover:bg-elegantBlack hover:shadow-lg transition-all duration-300">
+                            Vezi Colecția / Shop Now
+                        </button>
+                        <button onclick="navigateTo('custom-orders')" class="w-full sm:w-auto border border-darkBrown text-darkBrown px-8 py-3 md:px-10 md:py-4 rounded uppercase tracking-widest text-[11px] md:text-sm hover:bg-beige/30 hover:text-elegantBlack transition-all duration-300">
+                            Comandă personalizată
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="max-w-7xl mx-auto px-4 md:px-6 pb-8 md:pb-12 w-full reveal-up delay-100">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 pt-8 md:pt-12 border-t border-beige/50">
+                    <button onclick="navigateTo('creative-camps')" class="group text-left p-5 md:p-8 rounded-2xl bg-white/40 hover:bg-white transition-all shadow-sm hover:shadow-premium border border-beige/30">
+                        <h3 class="font-serif text-lg md:text-xl text-elegantBlack mb-1 md:mb-2 group-hover:text-gold transition-colors">Tabere creative</h3>
+                        <p class="text-[13px] md:text-sm text-darkBrown/70 font-light">Programe educative și creative pentru grupuri.</p>
+                    </button>
+                    <button onclick="navigateTo('art-therapy')" class="group text-left p-5 md:p-8 rounded-2xl bg-white/40 hover:bg-white transition-all shadow-sm hover:shadow-premium border border-beige/30">
+                        <h3 class="font-serif text-lg md:text-xl text-elegantBlack mb-1 md:mb-2 group-hover:text-gold transition-colors">Terapie prin artă</h3>
+                        <p class="text-[13px] md:text-sm text-darkBrown/70 font-light">Ședințe individuale și de grup pentru dezvoltare personală.</p>
+                    </button>
+                    <button onclick="navigateTo('certificate')" class="group text-left p-5 md:p-8 rounded-2xl bg-white/40 hover:bg-white transition-all shadow-sm hover:shadow-premium border border-beige/30">
+                        <h3 class="font-serif text-lg md:text-xl text-elegantBlack mb-1 md:mb-2 group-hover:text-gold transition-colors">Autenticitate</h3>
+                        <p class="text-[13px] md:text-sm text-darkBrown/70 font-light">Fiecare lucrare vine cu certificat de autenticitate.</p>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SHOP / LUCRĂRI DISPONIBILE ================= -->
+        <section id="shop" class="tab-content max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-12 w-full">
+            <button onclick="goBack()" class="inline-flex items-center gap-2 text-darkBrown hover:text-gold transition-colors mb-6 md:mb-10 text-[10px] md:text-xs tracking-widest uppercase font-medium">
+                <i class="fas fa-arrow-left"></i> Înapoi
+            </button>
+            
+            <div class="text-center max-w-3xl mx-auto mb-10 md:mb-16 reveal-up">
+                <h2 class="font-serif text-3xl md:text-5xl text-elegantBlack mb-4 md:mb-6 uppercase tracking-wider">Magazin / Lucrări Disponibile</h2>
+                <div class="w-12 md:w-16 h-px bg-gold mx-auto mb-4 md:mb-6"></div>
+                <p class="text-[14px] md:text-lg font-light text-darkBrown mb-2">Lucrări originale de artă contemporană disponibile pentru vânzare.</p>
+                <p class="text-[14px] md:text-lg font-light text-darkBrown mb-2">Fiecare tablou este unic, realizat manual.</p>
+                <p class="text-[14px] md:text-lg font-light text-darkBrown">Fiecare lucrare este unică și nu poate fi reprodusă.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+
+                <article class="bg-white rounded-2xl border border-beige/60 overflow-hidden shadow-sm hover:shadow-premium transition-all duration-300 group reveal-up">
+                    <button type="button" onclick="openArtwork(0)" class="block w-full text-left">
+                        <div class="w-full artwork-card-img bg-muted relative overflow-hidden">
+                            <img src="assets/images/tradition-wall.jpg" alt="Tradition" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                            <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[9px] md:text-[10px] uppercase tracking-widest text-elegantBlack shadow-sm">Disponibil</div>
+                            <div class="absolute bottom-4 right-4 bg-darkBrown text-cream px-4 py-2 rounded-full text-[11px] md:text-xs tracking-widest font-medium shadow-md">700 EUR</div>
+                        </div>
+                        <div class="p-6 md:p-8 relative z-10 bg-white">
+                            <h3 class="font-serif text-xl md:text-2xl text-elegantBlack mb-2 md:mb-3">Tradition</h3>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest bg-cream border border-beige/60 px-3 py-1 rounded-full text-darkBrown/80">90 x 70 cm</span>
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest bg-cream border border-beige/60 px-3 py-1 rounded-full text-darkBrown/80">Acrylic</span>
+                            </div>
+                            <p class="text-[13px] md:text-sm text-darkBrown/70 font-light mb-5 md:mb-6 leading-relaxed line-clamp-3">This painting embodies both feminine tenderness and strength — a quiet power woven through generations. Women’s traditions form the soul of folk culture, preserving ancient customs, beauty, and timeless wisdom that still inspire us today.</p>
+                            <div class="flex items-center justify-between border-t border-beige/40 pt-4">
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest font-medium text-gold">Vezi detalii</span>
+                                <span class="text-gold group-hover:translate-x-2 transition-transform text-base md:text-lg"><i class="fas fa-long-arrow-alt-right"></i></span>
+                            </div>
+                        </div>
+                    </button>
+                </article>
+                <article class="bg-white rounded-2xl border border-beige/60 overflow-hidden shadow-sm hover:shadow-premium transition-all duration-300 group reveal-up">
+                    <button type="button" onclick="openArtwork(1)" class="block w-full text-left">
+                        <div class="w-full artwork-card-img bg-muted relative overflow-hidden">
+                            <img src="assets/images/fragility-wall.jpg" alt="Fragility Woven from Light" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                            <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[9px] md:text-[10px] uppercase tracking-widest text-elegantBlack shadow-sm">Disponibil</div>
+                            <div class="absolute bottom-4 right-4 bg-darkBrown text-cream px-4 py-2 rounded-full text-[11px] md:text-xs tracking-widest font-medium shadow-md">1000 EUR</div>
+                        </div>
+                        <div class="p-6 md:p-8 relative z-10 bg-white">
+                            <h3 class="font-serif text-xl md:text-2xl text-elegantBlack mb-2 md:mb-3">Fragility Woven from Light</h3>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest bg-cream border border-beige/60 px-3 py-1 rounded-full text-darkBrown/80">100 x 100 cm</span>
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest bg-cream border border-beige/60 px-3 py-1 rounded-full text-darkBrown/80">Original painting</span>
+                            </div>
+                            <p class="text-[13px] md:text-sm text-darkBrown/70 font-light mb-5 md:mb-6 leading-relaxed line-clamp-3">A soul woven from light, strength, and scars.</p>
+                            <div class="flex items-center justify-between border-t border-beige/40 pt-4">
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest font-medium text-gold">Vezi detalii</span>
+                                <span class="text-gold group-hover:translate-x-2 transition-transform text-base md:text-lg"><i class="fas fa-long-arrow-alt-right"></i></span>
+                            </div>
+                        </div>
+                    </button>
+                </article>
+                <article class="bg-white rounded-2xl border border-beige/60 overflow-hidden shadow-sm hover:shadow-premium transition-all duration-300 group reveal-up">
+                    <button type="button" onclick="openArtwork(2)" class="block w-full text-left">
+                        <div class="w-full artwork-card-img bg-muted relative overflow-hidden">
+                            <img src="assets/images/eternal-protection-wall.jpg" alt="Eternal Protection" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                            <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[9px] md:text-[10px] uppercase tracking-widest text-elegantBlack shadow-sm">Disponibil</div>
+                            <div class="absolute bottom-4 right-4 bg-darkBrown text-cream px-4 py-2 rounded-full text-[11px] md:text-xs tracking-widest font-medium shadow-md">1000 EUR</div>
+                        </div>
+                        <div class="p-6 md:p-8 relative z-10 bg-white">
+                            <h3 class="font-serif text-xl md:text-2xl text-elegantBlack mb-2 md:mb-3">Eternal Protection</h3>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest bg-cream border border-beige/60 px-3 py-1 rounded-full text-darkBrown/80">100 x 100 cm</span>
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest bg-cream border border-beige/60 px-3 py-1 rounded-full text-darkBrown/80">Mixed technique Knife painting</span>
+                            </div>
+                            <p class="text-[13px] md:text-sm text-darkBrown/70 font-light mb-5 md:mb-6 leading-relaxed line-clamp-3">Some wounds are silent.</p>
+                            <div class="flex items-center justify-between border-t border-beige/40 pt-4">
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest font-medium text-gold">Vezi detalii</span>
+                                <span class="text-gold group-hover:translate-x-2 transition-transform text-base md:text-lg"><i class="fas fa-long-arrow-alt-right"></i></span>
+                            </div>
+                        </div>
+                    </button>
+                </article>
+                <article class="bg-white rounded-2xl border border-beige/60 overflow-hidden shadow-sm hover:shadow-premium transition-all duration-300 group reveal-up">
+                    <button type="button" onclick="openArtwork(3)" class="block w-full text-left">
+                        <div class="w-full artwork-card-img bg-muted relative overflow-hidden">
+                            <img src="assets/images/enchanted-wall.jpg" alt="Enchanted" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                            <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[9px] md:text-[10px] uppercase tracking-widest text-elegantBlack shadow-sm">Disponibil</div>
+                            <div class="absolute bottom-4 right-4 bg-darkBrown text-cream px-4 py-2 rounded-full text-[11px] md:text-xs tracking-widest font-medium shadow-md">1000 EUR</div>
+                        </div>
+                        <div class="p-6 md:p-8 relative z-10 bg-white">
+                            <h3 class="font-serif text-xl md:text-2xl text-elegantBlack mb-2 md:mb-3">Enchanted</h3>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest bg-cream border border-beige/60 px-3 py-1 rounded-full text-darkBrown/80">100 x 100 cm</span>
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest bg-cream border border-beige/60 px-3 py-1 rounded-full text-darkBrown/80">Original painting</span>
+                            </div>
+                            <p class="text-[13px] md:text-sm text-darkBrown/70 font-light mb-5 md:mb-6 leading-relaxed line-clamp-3">A soul woven from light, strength, and scars.</p>
+                            <div class="flex items-center justify-between border-t border-beige/40 pt-4">
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest font-medium text-gold">Vezi detalii</span>
+                                <span class="text-gold group-hover:translate-x-2 transition-transform text-base md:text-lg"><i class="fas fa-long-arrow-alt-right"></i></span>
+                            </div>
+                        </div>
+                    </button>
+                </article>
+                <article class="bg-white rounded-2xl border border-beige/60 overflow-hidden shadow-sm hover:shadow-premium transition-all duration-300 group reveal-up">
+                    <button type="button" onclick="openArtwork(4)" class="block w-full text-left">
+                        <div class="w-full artwork-card-img bg-muted relative overflow-hidden">
+                            <img src="assets/images/silken-thought-wall.jpg" alt="Black &amp; white" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                            <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[9px] md:text-[10px] uppercase tracking-widest text-elegantBlack shadow-sm">Disponibil</div>
+                            <div class="absolute bottom-4 right-4 bg-darkBrown text-cream px-4 py-2 rounded-full text-[11px] md:text-xs tracking-widest font-medium shadow-md">900 EUR</div>
+                        </div>
+                        <div class="p-6 md:p-8 relative z-10 bg-white">
+                            <h3 class="font-serif text-xl md:text-2xl text-elegantBlack mb-2 md:mb-3">Black &amp; white</h3>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest bg-cream border border-beige/60 px-3 py-1 rounded-full text-darkBrown/80">80 x 70 cm</span>
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest bg-cream border border-beige/60 px-3 py-1 rounded-full text-darkBrown/80">Original artwork</span>
+                            </div>
+                            <p class="text-[13px] md:text-sm text-darkBrown/70 font-light mb-5 md:mb-6 leading-relaxed line-clamp-3">A woman suspended between silence and emotion...</p>
+                            <div class="flex items-center justify-between border-t border-beige/40 pt-4">
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest font-medium text-gold">Vezi detalii</span>
+                                <span class="text-gold group-hover:translate-x-2 transition-transform text-base md:text-lg"><i class="fas fa-long-arrow-alt-right"></i></span>
+                            </div>
+                        </div>
+                    </button>
+                </article>
+                <article class="bg-white rounded-2xl border border-beige/60 overflow-hidden shadow-sm hover:shadow-premium transition-all duration-300 group reveal-up">
+                    <button type="button" onclick="openArtwork(5)" class="block w-full text-left">
+                        <div class="w-full artwork-card-img bg-muted relative overflow-hidden">
+                            <img src="assets/images/emerald-silence-wall.jpg" alt="Emerald Silence" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                            <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[9px] md:text-[10px] uppercase tracking-widest text-elegantBlack shadow-sm">Disponibil</div>
+                            <div class="absolute bottom-4 right-4 bg-darkBrown text-cream px-4 py-2 rounded-full text-[11px] md:text-xs tracking-widest font-medium shadow-md">350 EUR</div>
+                        </div>
+                        <div class="p-6 md:p-8 relative z-10 bg-white">
+                            <h3 class="font-serif text-xl md:text-2xl text-elegantBlack mb-2 md:mb-3">Emerald Silence</h3>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest bg-cream border border-beige/60 px-3 py-1 rounded-full text-darkBrown/80">50 x 70 cm</span>
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest bg-cream border border-beige/60 px-3 py-1 rounded-full text-darkBrown/80">Mixed Technique</span>
+                            </div>
+                            <p class="text-[13px] md:text-sm text-darkBrown/70 font-light mb-5 md:mb-6 leading-relaxed line-clamp-3">Original Painting for Sale</p>
+                            <div class="flex items-center justify-between border-t border-beige/40 pt-4">
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest font-medium text-gold">Vezi detalii</span>
+                                <span class="text-gold group-hover:translate-x-2 transition-transform text-base md:text-lg"><i class="fas fa-long-arrow-alt-right"></i></span>
+                            </div>
+                        </div>
+                    </button>
+                </article>
+                <article class="bg-white rounded-2xl border border-beige/60 overflow-hidden shadow-sm hover:shadow-premium transition-all duration-300 group reveal-up">
+                    <button type="button" onclick="openArtwork(6)" class="block w-full text-left">
+                        <div class="w-full artwork-card-img bg-muted relative overflow-hidden">
+                            <img src="assets/images/silk-thoughts-wall.jpg" alt="Silk Thoughts" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                            <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[9px] md:text-[10px] uppercase tracking-widest text-elegantBlack shadow-sm">Disponibil</div>
+                            <div class="absolute bottom-4 right-4 bg-darkBrown text-cream px-4 py-2 rounded-full text-[11px] md:text-xs tracking-widest font-medium shadow-md">900 EUR</div>
+                        </div>
+                        <div class="p-6 md:p-8 relative z-10 bg-white">
+                            <h3 class="font-serif text-xl md:text-2xl text-elegantBlack mb-2 md:mb-3">Silk Thoughts</h3>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest bg-cream border border-beige/60 px-3 py-1 rounded-full text-darkBrown/80">90 x 70 cm</span>
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest bg-cream border border-beige/60 px-3 py-1 rounded-full text-darkBrown/80">Original painting available</span>
+                            </div>
+                            <p class="text-[13px] md:text-sm text-darkBrown/70 font-light mb-5 md:mb-6 leading-relaxed line-clamp-3">Sometimes the loudest feelings exist in complete silence.</p>
+                            <div class="flex items-center justify-between border-t border-beige/40 pt-4">
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest font-medium text-gold">Vezi detalii</span>
+                                <span class="text-gold group-hover:translate-x-2 transition-transform text-base md:text-lg"><i class="fas fa-long-arrow-alt-right"></i></span>
+                            </div>
+                        </div>
+                    </button>
+                </article>
+                <article class="bg-white rounded-2xl border border-beige/60 overflow-hidden shadow-sm hover:shadow-premium transition-all duration-300 group reveal-up">
+                    <button type="button" onclick="openArtwork(7)" class="block w-full text-left">
+                        <div class="w-full artwork-card-img bg-muted relative overflow-hidden">
+                            <img src="assets/images/pearled-beauty-wall.jpg" alt="Pearled Beauty" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                            <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[9px] md:text-[10px] uppercase tracking-widest text-elegantBlack shadow-sm">Disponibil</div>
+                            <div class="absolute bottom-4 right-4 bg-darkBrown text-cream px-4 py-2 rounded-full text-[11px] md:text-xs tracking-widest font-medium shadow-md">600 EUR</div>
+                        </div>
+                        <div class="p-6 md:p-8 relative z-10 bg-white">
+                            <h3 class="font-serif text-xl md:text-2xl text-elegantBlack mb-2 md:mb-3">Pearled Beauty</h3>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest bg-cream border border-beige/60 px-3 py-1 rounded-full text-darkBrown/80">90 x 70 cm</span>
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest bg-cream border border-beige/60 px-3 py-1 rounded-full text-darkBrown/80">Acrylic</span>
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest bg-cream border border-beige/60 px-3 py-1 rounded-full text-darkBrown/80">Certificate of Authenticity</span>
+                            </div>
+                            <p class="text-[13px] md:text-sm text-darkBrown/70 font-light mb-5 md:mb-6 leading-relaxed line-clamp-3">Dreamlike portrait of a woman against a dark green background, adorned with pearls like a delicate mask — elegant, mysterious and full of feminine strength.</p>
+                            <div class="flex items-center justify-between border-t border-beige/40 pt-4">
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest font-medium text-gold">Vezi detalii</span>
+                                <span class="text-gold group-hover:translate-x-2 transition-transform text-base md:text-lg"><i class="fas fa-long-arrow-alt-right"></i></span>
+                            </div>
+                        </div>
+                    </button>
+                </article>
+                <article class="bg-white rounded-2xl border border-beige/60 overflow-hidden shadow-sm hover:shadow-premium transition-all duration-300 group reveal-up">
+                    <button type="button" onclick="openArtwork(8)" class="block w-full text-left">
+                        <div class="w-full artwork-card-img bg-muted relative overflow-hidden">
+                            <img src="assets/images/dance-behind-the-mask-wall.jpg" alt="Dance Behind the Mask" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                            <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[9px] md:text-[10px] uppercase tracking-widest text-elegantBlack shadow-sm">Disponibil</div>
+                            <div class="absolute bottom-4 right-4 bg-darkBrown text-cream px-4 py-2 rounded-full text-[11px] md:text-xs tracking-widest font-medium shadow-md">900 EUR</div>
+                        </div>
+                        <div class="p-6 md:p-8 relative z-10 bg-white">
+                            <h3 class="font-serif text-xl md:text-2xl text-elegantBlack mb-2 md:mb-3">Dance Behind the Mask</h3>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest bg-cream border border-beige/60 px-3 py-1 rounded-full text-darkBrown/80">100 x 100 cm</span>
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest bg-cream border border-beige/60 px-3 py-1 rounded-full text-darkBrown/80">Hand-painted original artwork</span>
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest bg-cream border border-beige/60 px-3 py-1 rounded-full text-darkBrown/80">Certificate of Authenticity</span>
+                            </div>
+                            <p class="text-[13px] md:text-sm text-darkBrown/70 font-light mb-5 md:mb-6 leading-relaxed line-clamp-3">A moment suspended between freedom and hidden identity, capturing pain, strength, femininity and elegance.</p>
+                            <div class="flex items-center justify-between border-t border-beige/40 pt-4">
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest font-medium text-gold">Vezi detalii</span>
+                                <span class="text-gold group-hover:translate-x-2 transition-transform text-base md:text-lg"><i class="fas fa-long-arrow-alt-right"></i></span>
+                            </div>
+                        </div>
+                    </button>
+                </article>
+                <article class="bg-white rounded-2xl border border-beige/60 overflow-hidden shadow-sm hover:shadow-premium transition-all duration-300 group reveal-up">
+                    <button type="button" onclick="openArtwork(9)" class="block w-full text-left">
+                        <div class="w-full artwork-card-img bg-muted relative overflow-hidden">
+                            <img src="assets/images/the-prayer-wall.jpg" alt="The Prayer" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                            <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[9px] md:text-[10px] uppercase tracking-widest text-elegantBlack shadow-sm">Disponibil</div>
+                            <div class="absolute bottom-4 right-4 bg-darkBrown text-cream px-4 py-2 rounded-full text-[11px] md:text-xs tracking-widest font-medium shadow-md">800 EUR</div>
+                        </div>
+                        <div class="p-6 md:p-8 relative z-10 bg-white">
+                            <h3 class="font-serif text-xl md:text-2xl text-elegantBlack mb-2 md:mb-3">The Prayer</h3>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest bg-cream border border-beige/60 px-3 py-1 rounded-full text-darkBrown/80">70 x 90 cm</span>
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest bg-cream border border-beige/60 px-3 py-1 rounded-full text-darkBrown/80">Acrylic</span>
+                            </div>
+                            <p class="text-[13px] md:text-sm text-darkBrown/70 font-light mb-5 md:mb-6 leading-relaxed line-clamp-3">Capturing a moment when all noise fades, and only the inner voice remains.</p>
+                            <div class="flex items-center justify-between border-t border-beige/40 pt-4">
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest font-medium text-gold">Vezi detalii</span>
+                                <span class="text-gold group-hover:translate-x-2 transition-transform text-base md:text-lg"><i class="fas fa-long-arrow-alt-right"></i></span>
+                            </div>
+                        </div>
+                    </button>
+                </article>
+                <article class="bg-white rounded-2xl border border-beige/60 overflow-hidden shadow-sm hover:shadow-premium transition-all duration-300 group reveal-up">
+                    <button type="button" onclick="openArtwork(10)" class="block w-full text-left">
+                        <div class="w-full artwork-card-img bg-muted relative overflow-hidden">
+                            <img src="assets/images/breakthrough-wall.jpg" alt="Breakthrough" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                            <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[9px] md:text-[10px] uppercase tracking-widest text-elegantBlack shadow-sm">Disponibil</div>
+                            <div class="absolute bottom-4 right-4 bg-darkBrown text-cream px-4 py-2 rounded-full text-[11px] md:text-xs tracking-widest font-medium shadow-md">800 EUR</div>
+                        </div>
+                        <div class="p-6 md:p-8 relative z-10 bg-white">
+                            <h3 class="font-serif text-xl md:text-2xl text-elegantBlack mb-2 md:mb-3">Breakthrough</h3>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest bg-cream border border-beige/60 px-3 py-1 rounded-full text-darkBrown/80">100 x 90 cm</span>
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest bg-cream border border-beige/60 px-3 py-1 rounded-full text-darkBrown/80">Mixed media / Acrylic / Gold pigments</span>
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest bg-cream border border-beige/60 px-3 py-1 rounded-full text-darkBrown/80">Texture art</span>
+                            </div>
+                            <p class="text-[13px] md:text-sm text-darkBrown/70 font-light mb-5 md:mb-6 leading-relaxed line-clamp-3">Not every crack is a sign of breaking. Some are the place where strength finds its way out.</p>
+                            <div class="flex items-center justify-between border-t border-beige/40 pt-4">
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest font-medium text-gold">Vezi detalii</span>
+                                <span class="text-gold group-hover:translate-x-2 transition-transform text-base md:text-lg"><i class="fas fa-long-arrow-alt-right"></i></span>
+                            </div>
+                        </div>
+                    </button>
+                </article>
+                <article class="bg-white rounded-2xl border border-beige/60 overflow-hidden shadow-sm hover:shadow-premium transition-all duration-300 group reveal-up">
+                    <button type="button" onclick="openArtwork(11)" class="block w-full text-left">
+                        <div class="w-full artwork-card-img bg-muted relative overflow-hidden">
+                            <img src="assets/images/abstract-wall-1.jpg" alt="Abstract" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                            <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[9px] md:text-[10px] uppercase tracking-widest text-elegantBlack shadow-sm">Disponibil</div>
+                            <div class="absolute bottom-4 right-4 bg-darkBrown text-cream px-4 py-2 rounded-full text-[11px] md:text-xs tracking-widest font-medium shadow-md">350 EUR</div>
+                        </div>
+                        <div class="p-6 md:p-8 relative z-10 bg-white">
+                            <h3 class="font-serif text-xl md:text-2xl text-elegantBlack mb-2 md:mb-3">Abstract</h3>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest bg-cream border border-beige/60 px-3 py-1 rounded-full text-darkBrown/80">50 x 70 cm</span>
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest bg-cream border border-beige/60 px-3 py-1 rounded-full text-darkBrown/80">Knife painting</span>
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest bg-cream border border-beige/60 px-3 py-1 rounded-full text-darkBrown/80">Certificate of Authenticity</span>
+                            </div>
+                            <p class="text-[13px] md:text-sm text-darkBrown/70 font-light mb-5 md:mb-6 leading-relaxed line-clamp-3">Abstract knife painting with vibrant texture, light reflections and expressive color contrast.</p>
+                            <div class="flex items-center justify-between border-t border-beige/40 pt-4">
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest font-medium text-gold">Vezi detalii</span>
+                                <span class="text-gold group-hover:translate-x-2 transition-transform text-base md:text-lg"><i class="fas fa-long-arrow-alt-right"></i></span>
+                            </div>
+                        </div>
+                    </button>
+                </article>
+                <article class="bg-white rounded-2xl border border-beige/60 overflow-hidden shadow-sm hover:shadow-premium transition-all duration-300 group reveal-up">
+                    <button type="button" onclick="openArtwork(12)" class="block w-full text-left">
+                        <div class="w-full artwork-card-img bg-muted relative overflow-hidden">
+                            <img src="assets/images/inner-gate-main.jpg" alt="Inner Gate" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                            <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[9px] md:text-[10px] uppercase tracking-widest text-elegantBlack shadow-sm">Disponibil</div>
+                            <div class="absolute bottom-4 right-4 bg-darkBrown text-cream px-4 py-2 rounded-full text-[11px] md:text-xs tracking-widest font-medium shadow-md">600 EUR</div>
+                        </div>
+                        <div class="p-6 md:p-8 relative z-10 bg-white">
+                            <h3 class="font-serif text-xl md:text-2xl text-elegantBlack mb-2 md:mb-3">Inner Gate</h3>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest bg-cream border border-beige/60 px-3 py-1 rounded-full text-darkBrown/80">90 x 40 cm</span>
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest bg-cream border border-beige/60 px-3 py-1 rounded-full text-darkBrown/80">Acrylic knife mixt technic</span>
+                            </div>
+                            <p class="text-[13px] md:text-sm text-darkBrown/70 font-light mb-5 md:mb-6 leading-relaxed line-clamp-3">A textured abstract composition built through layered green, yellow and turquoise shapes.</p>
+                            <div class="flex items-center justify-between border-t border-beige/40 pt-4">
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest font-medium text-gold">Vezi detalii</span>
+                                <span class="text-gold group-hover:translate-x-2 transition-transform text-base md:text-lg"><i class="fas fa-long-arrow-alt-right"></i></span>
+                            </div>
+                        </div>
+                    </button>
+                </article>
+                <article class="bg-white rounded-2xl border border-beige/60 overflow-hidden shadow-sm hover:shadow-premium transition-all duration-300 group reveal-up">
+                    <button type="button" onclick="openArtwork(13)" class="block w-full text-left">
+                        <div class="w-full artwork-card-img bg-muted relative overflow-hidden">
+                            <img src="assets/images/ashes-of-canvas-wall.jpg" alt="Ashes of Canvas" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                            <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[9px] md:text-[10px] uppercase tracking-widest text-elegantBlack shadow-sm">Disponibil</div>
+                            <div class="absolute bottom-4 right-4 bg-darkBrown text-cream px-4 py-2 rounded-full text-[11px] md:text-xs tracking-widest font-medium shadow-md">600 EUR</div>
+                        </div>
+                        <div class="p-6 md:p-8 relative z-10 bg-white">
+                            <h3 class="font-serif text-xl md:text-2xl text-elegantBlack mb-2 md:mb-3">Ashes of Canvas</h3>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest bg-cream border border-beige/60 px-3 py-1 rounded-full text-darkBrown/80">40 x 90 cm</span>
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest bg-cream border border-beige/60 px-3 py-1 rounded-full text-darkBrown/80">Knife painting / mixt technic</span>
+                            </div>
+                            <p class="text-[13px] md:text-sm text-darkBrown/70 font-light mb-5 md:mb-6 leading-relaxed line-clamp-3">A vertical abstract composition with warm orange tones, misty light and deep blue textured contrast.</p>
+                            <div class="flex items-center justify-between border-t border-beige/40 pt-4">
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest font-medium text-gold">Vezi detalii</span>
+                                <span class="text-gold group-hover:translate-x-2 transition-transform text-base md:text-lg"><i class="fas fa-long-arrow-alt-right"></i></span>
+                            </div>
+                        </div>
+                    </button>
+                </article>
+                <article class="bg-white rounded-2xl border border-beige/60 overflow-hidden shadow-sm hover:shadow-premium transition-all duration-300 group reveal-up">
+                    <button type="button" onclick="openArtwork(14)" class="block w-full text-left">
+                        <div class="w-full artwork-card-img bg-muted relative overflow-hidden">
+                            <img src="assets/images/joyful-survivors-wall.jpg" alt="JOYFUL SURVIVORS" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                            <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[9px] md:text-[10px] uppercase tracking-widest text-elegantBlack shadow-sm">Disponibil</div>
+                            <div class="absolute bottom-4 right-4 bg-darkBrown text-cream px-4 py-2 rounded-full text-[11px] md:text-xs tracking-widest font-medium shadow-md">1000 EUR</div>
+                        </div>
+                        <div class="p-6 md:p-8 relative z-10 bg-white">
+                            <h3 class="font-serif text-xl md:text-2xl text-elegantBlack mb-2 md:mb-3">JOYFUL SURVIVORS</h3>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest bg-cream border border-beige/60 px-3 py-1 rounded-full text-darkBrown/80">90 x 40 cm + 90 x 40 cm</span>
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest bg-cream border border-beige/60 px-3 py-1 rounded-full text-darkBrown/80">Diptych / 2 canvases</span>
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest bg-cream border border-beige/60 px-3 py-1 rounded-full text-darkBrown/80">Acrilic knife mixt technic</span>
+                            </div>
+                            <p class="text-[13px] md:text-sm text-darkBrown/70 font-light mb-5 md:mb-6 leading-relaxed line-clamp-3">A vibrant diptych composition with cacti, vases and strong red-turquoise contrast.</p>
+                            <div class="flex items-center justify-between border-t border-beige/40 pt-4">
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest font-medium text-gold">Vezi detalii</span>
+                                <span class="text-gold group-hover:translate-x-2 transition-transform text-base md:text-lg"><i class="fas fa-long-arrow-alt-right"></i></span>
+                            </div>
+                        </div>
+                    </button>
+                </article>
+                <article class="bg-white rounded-2xl border border-beige/60 overflow-hidden shadow-sm hover:shadow-premium transition-all duration-300 group reveal-up">
+                    <button type="button" onclick="openArtwork(15)" class="block w-full text-left">
+                        <div class="w-full artwork-card-img bg-muted relative overflow-hidden">
+                            <img src="assets/images/abstract-knife-wall.jpg" alt="Abstract Knife Technique" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                            <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[9px] md:text-[10px] uppercase tracking-widest text-elegantBlack shadow-sm">Disponibil</div>
+                            <div class="absolute bottom-4 right-4 bg-darkBrown text-cream px-4 py-2 rounded-full text-[11px] md:text-xs tracking-widest font-medium shadow-md">450 EUR</div>
+                        </div>
+                        <div class="p-6 md:p-8 relative z-10 bg-white">
+                            <h3 class="font-serif text-xl md:text-2xl text-elegantBlack mb-2 md:mb-3">Abstract Knife Technique</h3>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest bg-cream border border-beige/60 px-3 py-1 rounded-full text-darkBrown/80">50 x 70 cm</span>
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest bg-cream border border-beige/60 px-3 py-1 rounded-full text-darkBrown/80">Acrylic / Abstract knife technique</span>
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest bg-cream border border-beige/60 px-3 py-1 rounded-full text-darkBrown/80">Certificate of Authenticity</span>
+                            </div>
+                            <p class="text-[13px] md:text-sm text-darkBrown/70 font-light mb-5 md:mb-6 leading-relaxed line-clamp-3">Abstract acrylic knife technique with bold red, turquoise and white textured movement.</p>
+                            <div class="flex items-center justify-between border-t border-beige/40 pt-4">
+                                <span class="text-[10px] md:text-xs uppercase tracking-widest font-medium text-gold">Vezi detalii</span>
+                                <span class="text-gold group-hover:translate-x-2 transition-transform text-base md:text-lg"><i class="fas fa-long-arrow-alt-right"></i></span>
+                            </div>
+                        </div>
+                    </button>
+                </article>
+            </div>
+
+            <div class="mt-12 md:mt-16 bg-white rounded-2xl border border-beige/60 p-8 md:p-12 text-center shadow-sm reveal-up">
+                <p class="text-[13px] md:text-lg font-light text-darkBrown/80 mb-8 max-w-2xl mx-auto">
+                    Nu ai găsit exact lucrarea potrivită? Poți solicita o lucrare personalizată inspirată de stilul artistului.
+                </p>
+                <button onclick="navigateTo('contact')" class="text-[10px] md:text-xs uppercase tracking-widest text-darkBrown border-b border-darkBrown pb-1 hover:text-gold hover:border-gold transition-colors">
+                    DORESC O LUCRARE SIMILARĂ LA COMANDĂ
+                </button>
+            </div>
+        </section>
+
+
+        <!-- ================= POSTCARDS / SUVENIRURI ARTISTICE ================= -->
+        <section id="postcards" class="tab-content max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-12 w-full">
+            <button onclick="goBack()" class="inline-flex items-center gap-2 text-darkBrown hover:text-gold transition-colors mb-6 md:mb-10 text-[10px] md:text-xs tracking-widest uppercase font-medium">
+                <i class="fas fa-arrow-left"></i> Înapoi
+            </button>
+
+            <div class="text-center max-w-3xl mx-auto mb-10 md:mb-16 reveal-up">
+                <span class="text-gold uppercase tracking-[0.3em] text-[10px] md:text-sm font-semibold mb-4 block">Postcards / Souvenirs</span>
+                <h2 class="font-serif text-3xl md:text-5xl text-elegantBlack mb-4 md:mb-6 uppercase tracking-wider">Postcards / Suveniruri Artistice</h2>
+                <div class="w-12 md:w-16 h-px bg-gold mx-auto mb-4 md:mb-6"></div>
+                <p class="text-[14px] md:text-lg font-light text-darkBrown mb-2">More than a postcard — a small piece of art.</p>
+                <p class="text-[14px] md:text-lg font-light text-darkBrown">Colecție watercolor-style inspirată de frumusețea Transilvaniei / Erdély.</p>
+            </div>
+
+            <div class="bg-white rounded-2xl md:rounded-3xl border border-beige/60 p-6 md:p-10 shadow-sm mb-8 md:mb-12 reveal-up">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-10 items-center">
+                    <div>
+                        <h3 class="font-serif text-2xl md:text-4xl text-elegantBlack mb-4">Transylvania / Erdély Collection</h3>
+                        <p class="text-[13px] md:text-[15px] text-darkBrown/80 font-light leading-relaxed mb-6">
+                            Bring the beauty of Transylvania into your bookstore, gift shop, gallery, or tourist store. Our watercolor-style postcard collection offers visitors a unique and elegant souvenir they will want to keep and share.
+                        </p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[11px] md:text-xs uppercase tracking-widest text-darkBrown/80">
+                            <div class="bg-cream border border-beige/60 rounded-xl px-4 py-3">Exclusive artistic designs</div>
+                            <div class="bg-cream border border-beige/60 rounded-xl px-4 py-3">Perfect for bookstores</div>
+                            <div class="bg-cream border border-beige/60 rounded-xl px-4 py-3">Ideal for gift shops and galleries</div>
+                            <div class="bg-cream border border-beige/60 rounded-xl px-4 py-3">Inspired by Transylvania</div>
+                        </div>
+                    </div>
+                    <div class="bg-cream rounded-2xl border border-beige/60 p-3 shadow-passepartout">
+                        <img src="assets/images/postcard-erdely-lake-envelope.jpg" alt="Erdély postcard collection" class="w-full rounded-xl object-cover aspect-[4/3]">
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                    <article class="bg-white rounded-2xl border border-beige/60 overflow-hidden shadow-sm hover:shadow-premium transition-all duration-300 group reveal-up">
+                        <div class="postcard-card-img bg-muted overflow-hidden">
+                            <img src="assets/images/postcard-erdely-train.jpg" alt="Erdély / Transylvania landscape postcard" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                        </div>
+                    </article>
+                    <article class="bg-white rounded-2xl border border-beige/60 overflow-hidden shadow-sm hover:shadow-premium transition-all duration-300 group reveal-up">
+                        <div class="postcard-card-img bg-muted overflow-hidden">
+                            <img src="assets/images/postcard-erdely-lake-envelope.jpg" alt="Erdély lake postcard with envelope" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                        </div>
+                    </article>
+                    <article class="bg-white rounded-2xl border border-beige/60 overflow-hidden shadow-sm hover:shadow-premium transition-all duration-300 group reveal-up">
+                        <div class="postcard-card-img bg-muted overflow-hidden">
+                            <img src="assets/images/postcard-transylvania-hayfields.jpg" alt="Transylvania hayfield postcard" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                        </div>
+                    </article>
+                    <article class="bg-white rounded-2xl border border-beige/60 overflow-hidden shadow-sm hover:shadow-premium transition-all duration-300 group reveal-up">
+                        <div class="postcard-card-img bg-muted overflow-hidden">
+                            <img src="assets/images/postcard-transylvania-sunrise-horses.jpg" alt="Transylvania sunrise postcard" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                        </div>
+                    </article>
+                    <article class="bg-white rounded-2xl border border-beige/60 overflow-hidden shadow-sm hover:shadow-premium transition-all duration-300 group reveal-up">
+                        <div class="postcard-card-img bg-muted overflow-hidden">
+                            <img src="assets/images/postcard-transylvania-deer.jpg" alt="Transylvania deer postcard" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                        </div>
+                    </article>
+                    <article class="bg-white rounded-2xl border border-beige/60 overflow-hidden shadow-sm hover:shadow-premium transition-all duration-300 group reveal-up">
+                        <div class="postcard-card-img bg-muted overflow-hidden">
+                            <img src="assets/images/postcard-erdely-mountain-lake.jpg" alt="Erdély mountain lake postcard" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                        </div>
+                    </article>
+                    <article class="bg-white rounded-2xl border border-beige/60 overflow-hidden shadow-sm hover:shadow-premium transition-all duration-300 group reveal-up">
+                        <div class="postcard-card-img bg-muted overflow-hidden">
+                            <img src="assets/images/postcard-transylvania-village.jpg" alt="Transylvania village postcard" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                        </div>
+                    </article>
+                    <article class="bg-white rounded-2xl border border-beige/60 overflow-hidden shadow-sm hover:shadow-premium transition-all duration-300 group reveal-up">
+                        <div class="postcard-card-img bg-muted overflow-hidden">
+                            <img src="assets/images/postcard-anniversary.jpg" alt="Happy Anniversary artistic card" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                        </div>
+                    </article>
+                    <article class="bg-white rounded-2xl border border-beige/60 overflow-hidden shadow-sm hover:shadow-premium transition-all duration-300 group reveal-up">
+                        <div class="postcard-card-img bg-muted overflow-hidden">
+                            <img src="assets/images/postcard-congratulations-envelope.jpg" alt="Congratulations card with envelope" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                        </div>
+                    </article>
+                    <article class="bg-white rounded-2xl border border-beige/60 overflow-hidden shadow-sm hover:shadow-premium transition-all duration-300 group reveal-up">
+                        <div class="postcard-card-img bg-muted overflow-hidden">
+                            <img src="assets/images/postcard-graduation.jpg" alt="Congratulations graduation card" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                        </div>
+                    </article>
+                    <article class="bg-white rounded-2xl border border-beige/60 overflow-hidden shadow-sm hover:shadow-premium transition-all duration-300 group reveal-up">
+                        <div class="postcard-card-img bg-muted overflow-hidden">
+                            <img src="assets/images/postcard-storks-full.jpg" alt="Transylvania storks and hayfield postcard" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                        </div>
+                    </article>
+                    <article class="bg-white rounded-2xl border border-beige/60 overflow-hidden shadow-sm hover:shadow-premium transition-all duration-300 group reveal-up">
+                        <div class="postcard-card-img bg-muted overflow-hidden">
+                            <img src="assets/images/postcard-hayfield-full.jpg" alt="Transylvania green meadow postcard" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                        </div>
+                    </article>
+            </div>
+
+            <div class="mt-12 md:mt-16 bg-white rounded-2xl border border-beige/60 p-8 md:p-12 text-center shadow-sm reveal-up">
+                <p class="text-[13px] md:text-lg font-light text-darkBrown/80 mb-8 max-w-2xl mx-auto">
+                    Interested in wholesale orders or collaboration? Feel free to get in touch.
+                </p>
+                <button onclick="navigateTo('contact')" class="text-[10px] md:text-xs uppercase tracking-widest text-darkBrown border-b border-darkBrown pb-1 hover:text-gold hover:border-gold transition-colors">
+                    Contact pentru colaborare
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= COMENZI PERSONALIZATE ================= -->
+        <section id="custom-orders" class="tab-content max-w-5xl mx-auto px-4 md:px-6 py-8 md:py-12 w-full">
+            <button onclick="goBack()" class="inline-flex items-center gap-2 text-darkBrown hover:text-gold transition-colors mb-6 md:mb-10 text-[10px] md:text-xs tracking-widest uppercase font-medium">
+                <i class="fas fa-arrow-left"></i> Înapoi
+            </button>
+            
+            <div class="bg-white p-6 md:p-16 rounded-2xl md:rounded-3xl border border-white shadow-premium reveal-up">
+                <h2 class="font-serif text-3xl md:text-5xl text-elegantBlack mb-4 md:mb-6 uppercase tracking-wider text-center">Comenzi Personalizate</h2>
+                <div class="w-12 md:w-16 h-px bg-gold mx-auto mb-6 md:mb-10"></div>
+                
+                <p class="text-[15px] md:text-xl font-serif italic text-darkBrown mb-10 md:mb-16 text-center max-w-2xl mx-auto leading-relaxed">
+                    "Realizez picturi personalizate, create în funcție de viziunea, spațiul și emoția ta."
+                </p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 mb-10 md:mb-12">
+                    <div class="flex items-start gap-4 md:gap-5">
+                        <div class="text-gold text-xl md:text-2xl mt-1 w-6 md:w-8 text-center"><i class="fa-solid fa-ruler-combined"></i></div>
+                        <div>
+                            <h4 class="font-serif text-lg md:text-xl mb-1 md:mb-2 text-elegantBlack">Dimensiuni personalizate</h4>
+                            <p class="text-[13px] md:text-sm font-light text-darkBrown/80 leading-relaxed">Lucrarea este adaptată perfect spațiului tău, de la tablouri intime la pânze supradimensionate destinate pereților accent.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4 md:gap-5">
+                        <div class="text-gold text-xl md:text-2xl mt-1 w-6 md:w-8 text-center"><i class="fa-regular fa-lightbulb"></i></div>
+                        <div>
+                            <h4 class="font-serif text-lg md:text-xl mb-1 md:mb-2 text-elegantBlack">Dezvoltarea conceptului</h4>
+                            <p class="text-[13px] md:text-sm font-light text-darkBrown/80 leading-relaxed">Discutăm împreună despre paleta cromatică, texturi și emoția pe care dorești să o transmită lucrarea finală.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4 md:gap-5">
+                        <div class="text-gold text-xl md:text-2xl mt-1 w-6 md:w-8 text-center"><i class="fa-solid fa-house-chimney"></i></div>
+                        <div>
+                            <h4 class="font-serif text-lg md:text-xl mb-1 md:mb-2 text-elegantBlack">Pentru interior și cadouri</h4>
+                            <p class="text-[13px] md:text-sm font-light text-darkBrown/80 leading-relaxed">Opere de artă ideale pentru a înnobila un design interior rezidențial sau comercial, ori pentru a oferi un cadou cu adevărat unic.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4 md:gap-5">
+                        <div class="text-gold text-xl md:text-2xl mt-1 w-6 md:w-8 text-center"><i class="fa-regular fa-handshake"></i></div>
+                        <div>
+                            <h4 class="font-serif text-lg md:text-xl mb-1 md:mb-2 text-elegantBlack">Colaborare directă</h4>
+                            <p class="text-[13px] md:text-sm font-light text-darkBrown/80 leading-relaxed">Comunici direct cu artistul pe tot parcursul procesului creativ, asigurând un rezultat perfect aliniat viziunii tale.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center border-t border-beige pt-8 md:pt-10">
+                    <p class="text-[11px] md:text-sm uppercase tracking-widest font-medium text-darkBrown mb-6 md:mb-8">Te rog să iei legătura direct cu artistul pentru o cerere.</p>
+                    <button onclick="navigateTo('contact')" class="bg-darkBrown text-cream px-8 py-3 md:px-10 md:py-4 rounded uppercase tracking-widest text-[11px] md:text-sm hover:bg-elegantBlack transition-all duration-300">
+                        Scrie artistului
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= CERTIFICAT DE AUTENTICITATE ================= -->
+        <section id="certificate" class="tab-content max-w-6xl mx-auto px-4 md:px-6 py-8 md:py-12 w-full">
+            <button onclick="goBack()" class="inline-flex items-center gap-2 text-darkBrown hover:text-gold transition-colors mb-6 md:mb-10 text-[10px] md:text-xs tracking-widest uppercase font-medium">
+                <i class="fas fa-arrow-left"></i> Înapoi
+            </button>
+            
+            <div class="bg-white p-6 md:p-14 rounded-2xl md:rounded-3xl border border-white shadow-premium reveal-up">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-center">
+                    
+                    <div class="order-2 md:order-1">
+                        <h2 class="font-serif text-3xl md:text-5xl text-elegantBlack mb-4 md:mb-6 uppercase tracking-wider">Certificat de Autenticitate</h2>
+                        <div class="w-12 md:w-16 h-px bg-gold mb-6 md:mb-8"></div>
+                        
+                        <p class="text-[14px] md:text-lg font-light text-darkBrown leading-relaxed mb-6 md:mb-10">
+                            Fiecare lucrare originală poate fi însoțită de un certificat oficial de autenticitate, document ce atestă proveniența și valoarea operei.
+                        </p>
+                        
+                        <ul class="space-y-4 md:space-y-6 text-[13px] md:text-base font-light text-darkBrown/90">
+                            <li class="flex items-start gap-3 md:gap-4">
+                                <i class="fas fa-check text-gold mt-1"></i>
+                                <span>Confirmă autenticitatea lucrării și proveniența directă de la artist.</span>
+                            </li>
+                            <li class="flex items-start gap-3 md:gap-4">
+                                <i class="fas fa-check text-gold mt-1"></i>
+                                <span>Menționează că opera este unică și nereproductibilă, cu detalii despre titlu, tehnică, dimensiuni și an.</span>
+                            </li>
+                            <li class="flex items-start gap-3 md:gap-4">
+                                <i class="fas fa-check text-gold mt-1"></i>
+                                <span>Include semnătura olografă a artistului Biró Melinda.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="order-1 md:order-2 w-full max-w-sm md:max-w-md mx-auto">
+                        <div class="bg-white p-3 md:p-4 shadow-passepartout border border-beige/40">
+                            <img src="https://i.postimg.cc/ZnVtp45n/7168B321-90E7-4880-8EDC-85EDA33B982E.jpg" alt="Certificat de Autenticitate ELIART_2020" class="w-full h-auto object-cover border border-beige/20 mix-blend-multiply">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= DESPRE ARTIST ================= -->
+        <section id="about" class="tab-content max-w-6xl mx-auto px-4 md:px-6 py-8 md:py-12 w-full">
+            <button onclick="goBack()" class="inline-flex items-center gap-2 text-darkBrown hover:text-gold transition-colors mb-6 md:mb-10 text-[10px] md:text-xs tracking-widest uppercase font-medium">
+                <i class="fas fa-arrow-left"></i> Înapoi
+            </button>
+
+            <div class="bg-white p-6 md:p-14 rounded-2xl md:rounded-3xl border border-white shadow-premium reveal-up">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 items-start">
+                    
+                    <div class="lg:col-span-5 order-1">
+                        <div class="bg-white p-3 md:p-5 shadow-passepartout border border-beige/30 max-w-[260px] md:max-w-sm mx-auto lg:mx-0 transform rotate-1 transition-transform hover:rotate-0 duration-500">
+                            <div class="border border-beige/50 p-1">
+                                <img src="https://i.postimg.cc/7YtrLHRF/B683B73D-C547-476B-9823-34F7E07DB400.jpg" alt="Biró Melinda - Eliart" class="w-full aspect-[4/5] object-cover filter contrast-[1.05]">
+                            </div>
+                            <div class="text-center mt-3 md:mt-4 font-sans text-[8px] md:text-[9px] uppercase tracking-[0.3em] text-darkBrown/60">
+                                Biró Melinda
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="lg:col-span-7 order-2 lg:py-6">
+                        <h2 class="font-serif text-3xl md:text-5xl text-elegantBlack mb-4 md:mb-6 uppercase tracking-wider">Despre Artist</h2>
+                        <div class="w-12 md:w-16 h-px bg-gold mb-6 md:mb-10"></div>
+                        
+                        <div class="space-y-4 md:space-y-6 text-[13px] md:text-[15px] font-light text-darkBrown leading-relaxed">
+                            <p class="text-base md:text-xl font-serif text-elegantBlack italic">
+                                Numele meu este Biró Melinda, cunoscută artistic ca Eliart.
+                            </p>
+                            
+                            <p>Am moștenit pasiunea pentru pictură de la părinții mei și consider acest dar una dintre cele mai mari binecuvântări ale vieții mele. Lucrez intuitiv, explorând emoția, textura și materialul. Pictez pe pânză, lemn, sticlă, material textil și orice suprafață care mă inspiră.</p>
+                            
+                            <blockquote class="pl-4 md:pl-6 border-l-2 border-gold py-1 my-6 md:my-8 font-serif text-lg md:text-2xl text-elegantBlack leading-snug">
+                                "Arta mea nu este imitație — este transformare. În timpul creației intru într-un spațiu atemporal, unde emoția devine culoare și gândul devine formă."
+                            </blockquote>
+                            
+                            <p>Pe lângă activitatea artistică, am lucrat ca art-terapeut și profesor de desen. Aceste experiențe mi-au dezvoltat sensibilitatea și înțelegerea expresiei umane. Una dintre cele mai mari bucurii ale parcursului meu artistic este lucrul cu copiii. Ei devin adesea profesorii mei, amintindu-mi de puritatea, libertatea și spontaneitatea expresiei autentice.</p>
+                            
+                            <p>Ca art-terapeut, am avut privilegiul de a lucra și cu persoane cu dizabilități, care m-au învățat una dintre cele mai valoroase lecții: să văd cu inima. Ei nu judecă aparențele — ei simt ceea ce este real.</p>
+                            
+                            <div class="pt-4 md:pt-6 mt-6 md:mt-8 border-t border-beige">
+                                <p class="font-medium text-elegantBlack uppercase tracking-[0.1em] text-[10px] md:text-xs">
+                                    Fiecare lucrare este autentică, emoțională și realizată cu intenție.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SERVICII ================= -->
+        <section id="services" class="tab-content max-w-5xl mx-auto px-4 md:px-6 py-8 md:py-12 w-full text-center">
+            <button onclick="goBack()" class="inline-flex items-center gap-2 text-darkBrown hover:text-gold transition-colors mb-6 md:mb-10 text-[10px] md:text-xs tracking-widest uppercase font-medium">
+                <i class="fas fa-arrow-left"></i> Înapoi
+            </button>
+            <h2 class="font-serif text-3xl md:text-4xl text-elegantBlack mb-8 md:mb-12 uppercase tracking-wider reveal-up">Servicii Educaționale & Terapie</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 reveal-up delay-100">
+                <div class="bg-white p-8 md:p-14 rounded-2xl md:rounded-3xl shadow-sm border border-beige hover:shadow-premium transition-all cursor-pointer group" onclick="navigateTo('creative-camps')">
+                    <span class="text-[9px] md:text-[10px] uppercase tracking-[0.2em] text-gold mb-4 md:mb-6 block font-medium">Educație</span>
+                    <h3 class="font-serif text-2xl md:text-3xl text-elegantBlack mb-3 md:mb-4 group-hover:italic transition-all">Tabere Creative</h3>
+                    <p class="text-[13px] md:text-[15px] text-darkBrown/80 font-light mb-6 md:mb-8 leading-relaxed">Activități creative și educative la locația beneficiarului pentru școli, grădinițe și evenimente private.</p>
+                    <span class="text-[10px] md:text-xs uppercase tracking-widest font-medium text-darkBrown border-b border-darkBrown pb-1">Află detalii</span>
+                </div>
+                
+                <div class="bg-white p-8 md:p-14 rounded-2xl md:rounded-3xl shadow-sm border border-beige hover:shadow-premium transition-all cursor-pointer group" onclick="navigateTo('art-therapy')">
+                    <span class="text-[9px] md:text-[10px] uppercase tracking-[0.2em] text-gold mb-4 md:mb-6 block font-medium">Terapie</span>
+                    <h3 class="font-serif text-2xl md:text-3xl text-elegantBlack mb-3 md:mb-4 group-hover:italic transition-all">Terapie prin Artă</h3>
+                    <p class="text-[13px] md:text-[15px] text-darkBrown/80 font-light mb-6 md:mb-8 leading-relaxed">Ședințe individuale și de grup pentru dezvoltare personală, relaxare și echilibru interior.</p>
+                    <span class="text-[10px] md:text-xs uppercase tracking-widest font-medium text-darkBrown border-b border-darkBrown pb-1">Află detalii</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= TABERE CREATIVE ================= -->
+        <section id="creative-camps" class="tab-content max-w-4xl mx-auto px-4 md:px-6 py-8 md:py-12 w-full">
+            <button onclick="goBack()" class="inline-flex items-center gap-2 text-darkBrown hover:text-gold transition-colors mb-6 md:mb-10 text-[10px] md:text-xs tracking-widest uppercase font-medium">
+                <i class="fas fa-arrow-left"></i> Înapoi
+            </button>
+            
+            <div class="bg-white p-6 md:p-14 rounded-2xl md:rounded-3xl border border-white shadow-premium reveal-up">
+                <h2 class="font-serif text-3xl md:text-4xl text-elegantBlack mb-4 md:mb-6 uppercase tracking-wider">Tabere Creative</h2>
+                <div class="w-12 md:w-16 h-px bg-gold mb-8 md:mb-10"></div>
+                
+                <p class="text-[14px] md:text-lg font-light text-darkBrown leading-relaxed mb-6">
+                    Organizez tabere creative și educative la locația beneficiarului.<br>
+                    Mă deplasez la școli, grădinițe, centre educaționale, pensiuni, evenimente private și tabere tematice.
+                </p>
+                
+                <div class="bg-muted p-6 md:p-8 rounded-xl mb-8 border border-beige/40">
+                    <h4 class="font-serif text-lg md:text-xl mb-4 text-elegantBlack">Activitățile includ:</h4>
+                    <ul class="space-y-3 font-light text-[13px] md:text-[15px] text-darkBrown/90">
+                        <li class="flex items-start gap-3"><span class="text-gold mt-0.5 md:mt-1">•</span> pictură și desen creativ</li>
+                        <li class="flex items-start gap-3"><span class="text-gold mt-0.5 md:mt-1">•</span> activități senzoriale</li>
+                        <li class="flex items-start gap-3"><span class="text-gold mt-0.5 md:mt-1">•</span> dezvoltarea imaginației</li>
+                        <li class="flex items-start gap-3"><span class="text-gold mt-0.5 md:mt-1">•</span> jocuri educative</li>
+                    </ul>
+                </div>
+                
+                <p class="font-medium text-elegantBlack text-[14px] md:text-lg italic text-center mt-8 md:mt-10">
+                    Fiecare tabără este concepută pentru a îmbina creativitatea, dezvoltarea personală și bucuria de a crea.
+                </p>
+                
+                <div class="text-center mt-8 md:mt-10">
+                    <button onclick="navigateTo('contact')" class="border border-darkBrown text-darkBrown px-8 py-3 rounded uppercase tracking-widest text-[11px] md:text-xs hover:bg-beige/30 transition-all">
+                        Solicită o ofertă
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= TERAPIE PRIN ARTĂ ================= -->
+        <section id="art-therapy" class="tab-content max-w-4xl mx-auto px-4 md:px-6 py-8 md:py-12 w-full">
+            <button onclick="goBack()" class="inline-flex items-center gap-2 text-darkBrown hover:text-gold transition-colors mb-6 md:mb-10 text-[10px] md:text-xs tracking-widest uppercase font-medium">
+                <i class="fas fa-arrow-left"></i> Înapoi
+            </button>
+            
+            <div class="bg-white p-6 md:p-14 rounded-2xl md:rounded-3xl border border-white shadow-premium reveal-up">
+                <h2 class="font-serif text-3xl md:text-4xl text-elegantBlack mb-4 md:mb-6 uppercase tracking-wider">Terapie prin Artă</h2>
+                <div class="w-12 md:w-16 h-px bg-gold mb-8 md:mb-10"></div>
+                
+                <p class="text-[14px] md:text-lg font-light text-darkBrown leading-relaxed mb-8 md:mb-10">
+                    Ședințe individuale și de grup pentru copii, adolescenți și adulți. Terapia prin artă explorează potențialul vindecător al procesului creativ.
+                </p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 mb-8 md:mb-12">
+                    <div class="bg-cream p-6 md:p-8 rounded-xl border border-beige/40">
+                        <h4 class="font-sans text-[10px] md:text-xs uppercase tracking-widest mb-4 md:mb-6 text-elegantBlack font-medium">Benefică pentru:</h4>
+                        <ul class="space-y-3 font-light text-[13px] md:text-[15px] text-darkBrown/90">
+                            <li class="flex items-center gap-3"><span class="text-gold font-bold">-</span> Anxietate și stres</li>
+                            <li class="flex items-center gap-3"><span class="text-gold font-bold">-</span> Gestionarea emoțiilor</li>
+                            <li class="flex items-center gap-3"><span class="text-gold font-bold">-</span> Dezvoltare personală</li>
+                            <li class="flex items-center gap-3"><span class="text-gold font-bold">-</span> Creșterea încrederii</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="p-4 md:p-8">
+                        <h4 class="font-sans text-[10px] md:text-xs uppercase tracking-widest mb-4 md:mb-6 text-elegantBlack font-medium">Ateliere pentru:</h4>
+                        <ul class="space-y-3 font-light text-[13px] md:text-[15px] text-darkBrown/90">
+                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-beige rounded-full"></span> Evenimente private</li>
+                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-beige rounded-full"></span> Companii</li>
+                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-beige rounded-full"></span> Școli</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="border-t border-beige pt-8 text-center">
+                    <p class="font-serif text-darkBrown/80 text-[16px] md:text-xl italic mb-8 md:mb-10">
+                        Nu este necesară experiență artistică. Accentul este pus pe procesul creativ și starea de bine.
+                    </p>
+                    <button onclick="navigateTo('contact')" class="border border-darkBrown text-darkBrown px-8 md:px-10 py-3 md:py-4 rounded uppercase tracking-widest text-[11px] md:text-xs hover:bg-beige/30 transition-all">
+                        Programează o ședință
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PORTOFOLIU ================= -->
+        <section id="portfolio" class="tab-content max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-12 w-full">
+            <button onclick="goBack()" class="inline-flex items-center gap-2 text-darkBrown hover:text-gold transition-colors mb-6 md:mb-10 text-[10px] md:text-xs tracking-widest uppercase font-medium">
+                <i class="fas fa-arrow-left"></i> Înapoi
+            </button>
+            
+            <div class="text-center max-w-3xl mx-auto mb-10 md:mb-16 reveal-up">
+                <h2 class="font-serif text-3xl md:text-5xl text-elegantBlack mb-4 md:mb-6 uppercase tracking-wider">Portofoliu / Arhivă</h2>
+                <div class="w-12 md:w-16 h-px bg-gold mx-auto mb-4 md:mb-6"></div>
+                <p class="text-[13px] md:text-lg font-light text-darkBrown mb-2">O selecție de lucrări realizate și vândute.</p>
+            </div>
+
+            <div id="portfolio-gallery" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                <!-- AICI VOR FI ADAUGATE POZELE TALE PENTRU PORTOFOLIU -->
+            </div>
+            
+            <div class="text-center mt-12 md:mt-20 reveal-up">
+                <button onclick="navigateTo('custom-orders')" class="text-[10px] md:text-xs uppercase tracking-widest text-darkBrown border-b border-darkBrown pb-1 hover:text-gold hover:border-gold transition-colors">
+                    Doresc o lucrare similară la comandă
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= CONTACT ================= -->
+        <section id="contact" class="tab-content max-w-4xl mx-auto px-4 md:px-6 py-8 md:py-12 w-full flex-1 flex flex-col justify-center">
+            <button onclick="goBack()" class="inline-flex items-center gap-2 text-darkBrown hover:text-gold transition-colors mb-6 md:mb-10 text-[10px] md:text-xs tracking-widest uppercase font-medium self-start">
+                <i class="fas fa-arrow-left"></i> Înapoi
+            </button>
+            
+            <div class="bg-white p-6 md:p-16 rounded-2xl md:rounded-3xl border border-white shadow-premium text-center reveal-up">
+                <h2 class="font-serif text-3xl md:text-5xl text-elegantBlack mb-4 md:mb-6 uppercase tracking-wider">Contact</h2>
+                <div class="w-12 md:w-16 h-px bg-gold mx-auto mb-6 md:mb-10"></div>
+                
+                <p class="text-[13px] md:text-lg font-light text-darkBrown leading-relaxed mb-8 md:mb-12 max-w-xl mx-auto">
+                    Pentru comenzi personalizate, tabere, ateliere sau ședințe de terapie prin artă, te invit să iei legătura direct cu artistul.
+                </p>
+                
+                <div class="flex flex-col sm:flex-row flex-wrap justify-center items-center gap-3 md:gap-6 mb-10 md:mb-16 w-full max-w-2xl mx-auto">
+                    <!-- Apel automat -->
+                    <a href="tel:+40765502791" class="w-full sm:w-auto flex items-center justify-center gap-3 bg-darkBrown text-cream px-6 md:px-8 py-3 md:py-4 rounded-full hover:bg-elegantBlack transition-all shadow-md group">
+                        <i class="fas fa-phone-alt group-hover:animate-pulse"></i>
+                        <span class="text-[11px] md:text-sm uppercase tracking-widest font-medium">Sună acum</span>
+                    </a>
+                    
+                    <!-- WhatsApp -->
+                    <a href="https://wa.me/40765502791" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto flex items-center justify-center gap-3 bg-[#25D366] text-white px-6 md:px-8 py-3 md:py-4 rounded-full hover:bg-[#20bd5a] transition-all shadow-md group">
+                        <i class="fab fa-whatsapp text-base md:text-lg group-hover:scale-110 transition-transform"></i>
+                        <span class="text-[11px] md:text-sm uppercase tracking-widest font-medium">WhatsApp</span>
+                    </a>
+                    
+                    <!-- Email -->
+                    <a href="mailto:Meli_klara2025@yahoo.com" class="w-full sm:w-auto flex items-center justify-center gap-3 border border-darkBrown text-darkBrown px-6 md:px-8 py-3 md:py-4 rounded-full hover:bg-beige/30 transition-all group">
+                        <i class="far fa-envelope"></i>
+                        <span class="text-[11px] md:text-[13px] tracking-wider font-medium">Meli_klara2025@yahoo.com</span>
+                    </a>
+                </div>
+                
+                <!-- Datele Companiei Complete -->
+                <div class="bg-cream p-6 md:p-8 rounded-xl border border-beige/50 text-[11px] md:text-[13px] text-darkBrown/80 font-light max-w-lg mx-auto relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-6 h-6 md:w-8 md:h-8 bg-gold/10 rounded-bl-full"></div>
+                    <h3 class="font-sans text-[9px] md:text-[10px] font-medium text-elegantBlack uppercase tracking-[0.2em] mb-3 md:mb-4 border-b border-beige/50 pb-2 md:pb-3">Informații Companie</h3>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 text-left">
+                        <div>
+                            <p class="font-medium text-elegantBlack mb-1">RM ELIART 2020 SRL</p>
+                            <p>CUI: <span class="font-medium text-elegantBlack">43192503</span></p>
+                            <p>Înființare: 15.10.2020</p>
+                        </div>
+                        <div>
+                            <p>Județ Covasna</p>
+                            <p>Sat Sâncraiu, Nr. 550</p>
+                            <p>Cod poștal: 527107</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- Artwork Modal -->
+    <div id="artwork-modal" class="artwork-modal fixed inset-0 z-[80] bg-elegantBlack/70 backdrop-blur-sm hidden flex items-center justify-center px-4 py-6" onclick="closeArtworkModal()">
+        <div class="artwork-modal-panel bg-cream w-full max-w-5xl max-h-[92vh] overflow-y-auto rounded-2xl md:rounded-3xl shadow-2xl border border-beige/60" onclick="event.stopPropagation()">
+            <div class="sticky top-0 z-10 bg-cream/95 backdrop-blur border-b border-beige/60 px-5 md:px-8 py-4 flex items-center justify-between">
+                <h3 id="artwork-modal-title" class="font-serif text-xl md:text-3xl text-elegantBlack"></h3>
+                <button type="button" onclick="closeArtworkModal()" class="w-10 h-10 rounded-full border border-beige/80 flex items-center justify-center text-darkBrown hover:text-gold hover:border-gold transition-colors">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-10 p-5 md:p-8">
+                <div>
+                    <div class="bg-white p-3 md:p-4 shadow-passepartout border border-beige/40 rounded-xl">
+                        <img id="artwork-modal-image" src="" alt="" class="w-full max-h-[65vh] object-contain rounded-lg">
+                    </div>
+                    <div id="artwork-modal-thumbs" class="flex flex-wrap gap-3 mt-4"></div>
+                </div>
+                <div class="lg:py-4">
+                    <div id="artwork-modal-info" class="flex flex-wrap gap-2 mb-6 text-[10px] md:text-xs uppercase tracking-widest text-darkBrown/80"></div>
+                    <div class="w-12 h-px bg-gold mb-6"></div>
+                    <div id="artwork-modal-desc" class="artwork-modal-description text-[13px] md:text-[15px] font-light text-darkBrown leading-relaxed"></div>
+                    <div class="mt-8 pt-6 border-t border-beige/60">
+                        <button onclick="closeArtworkModal(); navigateTo('contact')" class="bg-darkBrown text-cream px-7 py-3 rounded uppercase tracking-widest text-[11px] md:text-sm hover:bg-elegantBlack transition-all duration-300">
+                            Contact pentru lucrare
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer minimal -->
+    <footer class="border-t border-beige/60 bg-cream z-10 relative mt-auto">
+        <div class="max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-10 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-6 text-center md:text-left">
+            <div class="text-[10px] md:text-[11px] text-darkBrown/70 font-light tracking-wide space-y-1">
+                <p class="font-medium text-elegantBlack uppercase tracking-[0.2em] mb-1.5 md:mb-2 text-[9px] md:text-[10px]">RM ELIART 2020 SRL</p>
+                <p>CUI: 43192503 &nbsp;|&nbsp; Înființată: 15.10.2020</p>
+                <p>Sat Sâncraiu nr. 550, Cod 527107, Jud. Covasna</p>
+            </div>
+            <div class="text-[8px] md:text-[9px] tracking-[0.2em] uppercase font-light text-darkBrown/60 flex flex-col md:items-end">
+                <p>&copy; <span id="current-year"></span> ELIART_2020.</p>
+                <p class="mt-1">Toate drepturile rezervate.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Logic / JavaScript -->
+    <script src="js/main.js"></script>
+    <script src="js/artworks.js"></script>
+</body>
+</html>
