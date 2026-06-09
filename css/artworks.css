@@ -1,0 +1,220 @@
+/* ELIART artwork/gallery helpers */
+.artwork-card-img {
+    aspect-ratio: 4 / 5;
+    min-height: 300px;
+}
+
+@media (min-width: 768px) {
+    .artwork-card-img {
+        min-height: 360px;
+    }
+}
+
+.line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.artwork-modal-panel {
+    overscroll-behavior: contain;
+}
+
+.artwork-modal-description p {
+    margin-bottom: 1rem;
+}
+
+.artwork-modal-description p:last-child {
+    margin-bottom: 0;
+}
+
+.artwork-thumb {
+    width: 72px;
+    height: 72px;
+    border-radius: 0.85rem;
+    overflow: hidden;
+    border: 1px solid rgba(232, 220, 196, 0.9);
+    background: #ffffff;
+    cursor: pointer;
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.artwork-thumb:hover,
+.artwork-thumb.active-thumb {
+    transform: translateY(-2px);
+    border-color: #C5A059;
+    box-shadow: 0 10px 25px -18px rgba(44, 36, 27, 0.55);
+}
+
+.artwork-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.postcard-card-img {
+    aspect-ratio: 4 / 3;
+    min-height: 240px;
+}
+
+@media (max-width: 640px) {
+    .artwork-card-img {
+        min-height: 320px;
+    }
+
+    .postcard-card-img {
+        min-height: 250px;
+    }
+}
+
+.image-missing-box {
+    position: relative;
+    background: linear-gradient(135deg, #EBE0D3, #F4EBE1);
+}
+
+.image-missing-message {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1.5rem;
+    color: #2C241B;
+    font-family: Montserrat, sans-serif;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    pointer-events: none;
+}
+
+.image-missing-message span {
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.image-missing-message small {
+    margin-top: 0.35rem;
+    font-size: 0.58rem;
+    opacity: 0.65;
+    letter-spacing: 0.08em;
+}
+
+
+/* RO / EN sliding language switch - fixed */
+.language-toggle {
+    min-width: 44px !important;
+    min-height: 34px !important;
+}
+
+.lang-switch {
+    position: relative !important;
+    width: 108px !important;
+    height: 42px !important;
+    min-width: 108px !important;
+    min-height: 42px !important;
+    box-sizing: border-box !important;
+    border: 1.5px solid rgba(197, 160, 89, 0.92) !important;
+    border-radius: 999px !important;
+    background: rgba(255, 255, 255, 0.72) !important;
+    color: #2C241B !important;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    font-family: Montserrat, sans-serif !important;
+    font-size: 12px !important;
+    line-height: 1 !important;
+    letter-spacing: 0.16em !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+    overflow: hidden !important;
+    box-shadow: 0 8px 22px -18px rgba(44, 36, 27, 0.45) !important;
+    transition: border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease !important;
+}
+
+.lang-switch::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 4px !important;
+    left: 4px !important;
+    width: calc(50% - 8px) !important;
+    height: calc(100% - 8px) !important;
+    border-radius: 999px !important;
+    background: #C5A059 !important;
+    box-shadow: 0 8px 18px -10px rgba(44, 36, 27, 0.65) !important;
+    transform: translateX(0) !important;
+    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    z-index: 0 !important;
+}
+
+.lang-switch span {
+    position: relative !important;
+    z-index: 1 !important;
+    width: 100% !important;
+    text-align: center !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: rgba(44, 36, 27, 0.58) !important;
+    transition: color 0.25s ease !important;
+    pointer-events: none !important;
+}
+
+body.lang-ro .lang-switch span:first-child,
+.lang-switch span:first-child {
+    color: #2C241B !important;
+}
+
+body.lang-ro .lang-switch span:last-child {
+    color: rgba(44, 36, 27, 0.58) !important;
+}
+
+body.lang-en .lang-switch::before {
+    transform: translateX(calc(100% + 8px)) !important;
+}
+
+body.lang-en .lang-switch span:first-child {
+    color: rgba(44, 36, 27, 0.58) !important;
+}
+
+body.lang-en .lang-switch span:last-child {
+    color: #2C241B !important;
+}
+
+.lang-switch:hover {
+    background: rgba(255, 255, 255, 0.88) !important;
+    border-color: #C5A059 !important;
+    box-shadow: 0 12px 28px -18px rgba(44, 36, 27, 0.55) !important;
+}
+
+.mobile-lang-switch {
+    width: 108px !important;
+    max-width: 108px !important;
+    min-width: 108px !important;
+    margin: 0 auto !important;
+}
+
+@media (max-width: 640px) {
+    .lang-switch {
+        width: 96px !important;
+        min-width: 96px !important;
+        height: 38px !important;
+        min-height: 38px !important;
+        font-size: 11px !important;
+    }
+
+    .mobile-lang-switch {
+        width: 96px !important;
+        max-width: 96px !important;
+        min-width: 96px !important;
+    }
+}
+
+#portfolio-gallery:empty + .text-center {
+    margin-top: 1.5rem !important;
+}
+
