@@ -1,294 +1,287 @@
 <!DOCTYPE html>
 <html lang="ro">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Site Suspendat Temporar</title>
-    <style>
-        /* Reset de bază pentru a asigura consistența pe toate browserele */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Site Suspendat Temporar</title>
 
-        body {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            /* Folosim fonturi sistem elegante și moderne */
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #030712; /* Fundal foarte închis, profesional */
-            color: #f3f4f6;
-            overflow: hidden;
-            position: relative;
-        }
+  <style>
+    :root {
+      --bg: #f4f6fb;
+      --card: rgba(255, 255, 255, 0.88);
+      --text: #111827;
+      --muted: #6b7280;
+      --accent: #2563eb;
+      --accent-soft: #dbeafe;
+      --warning-bg: #fef3c7;
+      --warning-text: #92400e;
+      --border: rgba(229, 231, 235, 0.85);
+    }
 
-        /* Canvas pentru particulele animate din fundal */
-        #bg-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            pointer-events: none;
-        }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-        /* Efect de lumină difuză (glow) în spatele cardului */
-        .glow-background {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 60vw;
-            height: 60vw;
-            max-width: 600px;
-            max-height: 600px;
-            background: radial-gradient(circle, rgba(79, 70, 229, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
-            filter: blur(60px);
-            z-index: 2;
-            pointer-events: none;
-        }
+    body {
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top left, #dbeafe 0, transparent 34%),
+        radial-gradient(circle at bottom right, #e0e7ff 0, transparent 32%),
+        var(--bg);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      overflow: hidden;
+      position: relative;
+    }
 
-        /* Containerul principal pentru a gestiona spațierea pe mobil */
-        .container {
-            position: relative;
-            z-index: 3;
-            width: 100%;
-            max-width: 540px;
-            padding: 20px;
-        }
+    .glass-orb {
+      position: fixed;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.32);
+      border: 1px solid rgba(255, 255, 255, 0.55);
+      box-shadow: 0 20px 60px rgba(37, 99, 235, 0.13);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      pointer-events: none;
+      z-index: 0;
+    }
 
-        /* Cardul central cu efect de Glassmorphism */
-        .glass-card {
-            background: rgba(17, 24, 39, 0.6);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 24px;
-            padding: 3.5rem 2.5rem;
-            text-align: center;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            
-            /* Animație de intrare */
-            opacity: 0;
-            transform: translateY(30px);
-            animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            animation-delay: 0.2s;
-        }
+    .glass-orb.one {
+      width: 150px;
+      height: 150px;
+      top: 12%;
+      left: 10%;
+      animation: floatOne 9s ease-in-out infinite;
+    }
 
-        /* Iconița de sus (Clepsidră elegantă) */
-        .icon-wrapper {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 1.5rem;
-            color: #9ca3af;
-        }
+    .glass-orb.two {
+      width: 105px;
+      height: 105px;
+      right: 12%;
+      bottom: 16%;
+      animation: floatTwo 10s ease-in-out infinite;
+    }
 
-        .icon-wrapper svg {
-            width: 42px;
-            height: 42px;
-            stroke-width: 1.2;
-            animation: pulseIcon 4s ease-in-out infinite;
-        }
+    @keyframes floatOne {
+      0%, 100% {
+        transform: translate(0, 0);
+      }
+      50% {
+        transform: translate(22px, -18px);
+      }
+    }
 
-        /* Titlul principal */
-        h1 {
-            font-size: 1.75rem;
-            font-weight: 600;
-            letter-spacing: -0.025em;
-            margin-bottom: 1rem;
-            /* Gradient subtil pe text pentru aspect premium */
-            background: linear-gradient(135deg, #ffffff 0%, #9ca3af 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
+    @keyframes floatTwo {
+      0%, 100% {
+        transform: translate(0, 0);
+      }
+      50% {
+        transform: translate(-18px, 20px);
+      }
+    }
 
-        /* Textul descriptiv */
-        p {
-            font-size: 1.05rem;
-            line-height: 1.6;
-            color: #9ca3af;
-            margin-bottom: 2.5rem;
-            font-weight: 400;
-        }
+    .container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 720px;
+      background: var(--card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: 0 24px 70px rgba(15, 23, 42, 0.12);
+      padding: 48px;
+      text-align: center;
+    }
 
-        /* Butonul de contact */
-        .contact-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #e5e7eb;
-            text-decoration: none;
-            padding: 0.875rem 1.75rem;
-            border-radius: 9999px;
-            font-size: 0.95rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
+    .icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: var(--accent-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+      color: var(--accent);
+      font-size: 34px;
+      font-weight: 800;
+      box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.08);
+    }
 
-        .contact-btn:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 255, 255, 0.05);
-            color: #ffffff;
-        }
+    .status {
+      display: inline-block;
+      margin-bottom: 18px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: var(--warning-bg);
+      color: var(--warning-text);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
 
-        .contact-btn svg {
-            width: 18px;
-            height: 18px;
-        }
+    h1 {
+      font-size: clamp(32px, 5vw, 48px);
+      line-height: 1.1;
+      margin-bottom: 18px;
+      color: #111827;
+    }
 
-        /* Animații CSS */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+    .message {
+      max-width: 570px;
+      margin: 0 auto 30px;
+    }
 
-        @keyframes pulseIcon {
-            0%, 100% { opacity: 0.7; }
-            50% { opacity: 1; }
-        }
+    p {
+      font-size: 18px;
+      line-height: 1.7;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
 
-        /* Optimizări pentru ecrane mici (Mobile) */
-        @media (max-width: 480px) {
-            .glass-card {
-                padding: 2.5rem 1.5rem;
-            }
-            
-            h1 {
-                font-size: 1.5rem;
-            }
+    .contact-box {
+      background: rgba(249, 250, 251, 0.78);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      margin-top: 28px;
+    }
 
-            p {
-                font-size: 1rem;
-            }
-        }
-    </style>
+    .contact-label {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .email-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 18px;
+      border-radius: 999px;
+      background: var(--accent);
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 700;
+      word-break: break-word;
+      transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .email-link:hover {
+      background: #1d4ed8;
+      transform: translateY(-1px);
+      box-shadow: 0 10px 22px rgba(37, 99, 235, 0.18);
+    }
+
+    .footer {
+      margin-top: 28px;
+      font-size: 13px;
+      color: #9ca3af;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 16px;
+        overflow: auto;
+      }
+
+      .glass-orb.one {
+        width: 105px;
+        height: 105px;
+        top: 8%;
+        left: -28px;
+      }
+
+      .glass-orb.two {
+        width: 82px;
+        height: 82px;
+        right: -22px;
+        bottom: 10%;
+      }
+
+      .container {
+        padding: 34px 22px;
+        border-radius: 20px;
+      }
+
+      .icon {
+        width: 62px;
+        height: 62px;
+        font-size: 30px;
+        margin-bottom: 20px;
+      }
+
+      p {
+        font-size: 16px;
+      }
+
+      .contact-box {
+        padding: 18px 14px;
+      }
+
+      .email-link {
+        width: 100%;
+        font-size: 14px;
+        padding: 12px 14px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .glass-orb {
+        animation: none;
+      }
+    }
+  </style>
 </head>
+
 <body>
+  <div class="glass-orb one"></div>
+  <div class="glass-orb two"></div>
 
-    <!-- Canvas pentru particule -->
-    <canvas id="bg-canvas"></canvas>
-    
-    <!-- Efect luminos în fundal -->
-    <div class="glow-background"></div>
+  <main class="container">
+    <div class="icon">!</div>
 
-    <!-- Conținutul principal -->
-    <div class="container">
-        <div class="glass-card">
-            
-            <div class="icon-wrapper">
-                <!-- Iconiță elegantă clepsidră -->
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M5 22h14"></path>
-                    <path d="M5 2h14"></path>
-                    <path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"></path>
-                    <path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"></path>
-                </svg>
-            </div>
+    <div class="status">Suspendare temporară</div>
 
-            <h1>Site Suspendat Temporar</h1>
-            
-            <p>Acest site a fost suspendat temporar de către administrator până la finalizarea formalităților administrative necesare. După clarificarea situației, accesul va fi restabilit.</p>
-            
-            <a href="mailto:cmn.webdesigner@gmail.com" class="contact-btn">
-                <!-- Iconiță de mail integrată frumos -->
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <rect width="20" height="16" x="2" y="4" rx="2"></rect>
-                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
-                </svg>
-                Contact administrator
-            </a>
+    <h1>Site suspendat temporar</h1>
 
-        </div>
+    <div class="message">
+      <p>
+        Acest site a fost suspendat temporar de către administrator
+        până la finalizarea formalităților administrative necesare.
+      </p>
+      <p>
+        Accesul va fi restabilit după clarificarea situației.
+      </p>
     </div>
 
-    <!-- Script pentru particulele animate (Vanilla JS) -->
-    <script>
-        const canvas = document.getElementById('bg-canvas');
-        const ctx = canvas.getContext('2d');
+    <div class="contact-box">
+      <span class="contact-label">Contact administrator</span>
+      <a class="email-link" href="mailto:cmn.webdesigner@gmail.com">
+        cmn.webdesigner@gmail.com
+      </a>
+    </div>
 
-        let width, height;
-        let particles = [];
+    <div class="footer">
+      © <span id="year"></span> — Site suspendat temporar
+    </div>
+  </main>
 
-        // Setăm dimensiunea canvas-ului
-        function resize() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-        }
-
-        window.addEventListener('resize', resize);
-        resize();
-
-        // Clasa pentru fiecare particulă
-        class Particle {
-            constructor() {
-                this.x = Math.random() * width;
-                this.y = Math.random() * height;
-                this.size = Math.random() * 1.5 + 0.5; // Particule foarte mici, discrete
-                this.speedX = (Math.random() - 0.5) * 0.3; // Mișcare lentă
-                this.speedY = (Math.random() - 0.5) * 0.3;
-                this.opacity = Math.random() * 0.5 + 0.1;
-            }
-
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
-
-                // Repunem particulele care ies din ecran
-                if (this.x < 0) this.x = width;
-                if (this.x > width) this.x = 0;
-                if (this.y < 0) this.y = height;
-                if (this.y > height) this.y = 0;
-            }
-
-            draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
-                ctx.fill();
-            }
-        }
-
-        // Inițializare particule
-        function init() {
-            particles = [];
-            // Generăm numărul de particule în funcție de lățimea ecranului
-            let particleCount = Math.floor(width / 15);
-            for (let i = 0; i < particleCount; i++) {
-                particles.push(new Particle());
-            }
-        }
-
-        // Bucla de animație
-        function animate() {
-            ctx.clearRect(0, 0, width, height);
-            
-            particles.forEach(particle => {
-                particle.update();
-                particle.draw();
-            });
-
-            requestAnimationFrame(animate);
-        }
-
-        init();
-        animate();
-    </script>
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
