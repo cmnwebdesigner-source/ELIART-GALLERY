@@ -1,29 +1,294 @@
-Creează un fișier complet `index.html`, cu HTML, CSS și JavaScript în același fișier, pentru o pagină profesională de „site suspendat temporar”.
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Site Suspendat Temporar</title>
+    <style>
+        /* Reset de bază pentru a asigura consistența pe toate browserele */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-Context:
-Am făcut un site pentru o clientă, dar site-ul este suspendat temporar până la finalizarea formalităților administrative. Textul trebuie să fie elegant, neutru și profesional, fără să sune agresiv sau acuzator.
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* Folosim fonturi sistem elegante și moderne */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #030712; /* Fundal foarte închis, profesional */
+            color: #f3f4f6;
+            overflow: hidden;
+            position: relative;
+        }
 
-Text principal în română:
-„Acest site a fost suspendat temporar de către administrator până la finalizarea formalităților administrative necesare. După clarificarea situației, accesul va fi restabilit.”
+        /* Canvas pentru particulele animate din fundal */
+        #bg-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
 
-Contact:
-MAIL: [cmn.webdesigner@gmail.com](mailto:cmn.webdesigner@gmail.com)
+        /* Efect de lumină difuză (glow) în spatele cardului */
+        .glow-background {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60vw;
+            height: 60vw;
+            max-width: 600px;
+            max-height: 600px;
+            background: radial-gradient(circle, rgba(79, 70, 229, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+            filter: blur(60px);
+            z-index: 2;
+            pointer-events: none;
+        }
 
-Cerințe de design:
+        /* Containerul principal pentru a gestiona spațierea pe mobil */
+        .container {
+            position: relative;
+            z-index: 3;
+            width: 100%;
+            max-width: 540px;
+            padding: 20px;
+        }
 
-* Să arate premium, modern și profesional, nu basic.
-* Să fie foarte frumos atât pe telefon, cât și pe calculator.
-* Layout responsive.
-* Fundal elegant, cu gradient dark luxury sau glassmorphism.
-* Card central modern, cu efect de blur/sticlă.
-* Animații subtile, profesionale: glow, fade-in, particule discrete sau linii animate.
-* Să existe un buton elegant „Contact administrator” care deschide mailto:cmn[.webdesigner@gmail.com](mailto:.webdesigner@gmail.com).
-* Emailul să fie integrat frumos în design, nu pus urât pe rând separat.
-* Să folosească doar HTML, CSS și JavaScript simplu, fără librării externe.
-* Să fie compatibil cu hosting normal, doar prin încărcarea fișierului `index.html`.
-* Să nu includă texte lungi inutile.
-* Să nu pară o pagină de eroare simplă, ci o pagină custom premium.
-* Să fie optimizat pentru mobil.
-* Să aibă un aspect serios, elegant, potrivit pentru un site suspendat temporar.
+        /* Cardul central cu efect de Glassmorphism */
+        .glass-card {
+            background: rgba(17, 24, 39, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 3.5rem 2.5rem;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            
+            /* Animație de intrare */
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation-delay: 0.2s;
+        }
 
-Vreau codul complet pentru `index.html`, gata de copiat și urcat pe server.
+        /* Iconița de sus (Clepsidră elegantă) */
+        .icon-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            color: #9ca3af;
+        }
+
+        .icon-wrapper svg {
+            width: 42px;
+            height: 42px;
+            stroke-width: 1.2;
+            animation: pulseIcon 4s ease-in-out infinite;
+        }
+
+        /* Titlul principal */
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            letter-spacing: -0.025em;
+            margin-bottom: 1rem;
+            /* Gradient subtil pe text pentru aspect premium */
+            background: linear-gradient(135deg, #ffffff 0%, #9ca3af 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Textul descriptiv */
+        p {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            color: #9ca3af;
+            margin-bottom: 2.5rem;
+            font-weight: 400;
+        }
+
+        /* Butonul de contact */
+        .contact-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #e5e7eb;
+            text-decoration: none;
+            padding: 0.875rem 1.75rem;
+            border-radius: 9999px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .contact-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+        }
+
+        .contact-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Animații CSS */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulseIcon {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        /* Optimizări pentru ecrane mici (Mobile) */
+        @media (max-width: 480px) {
+            .glass-card {
+                padding: 2.5rem 1.5rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Canvas pentru particule -->
+    <canvas id="bg-canvas"></canvas>
+    
+    <!-- Efect luminos în fundal -->
+    <div class="glow-background"></div>
+
+    <!-- Conținutul principal -->
+    <div class="container">
+        <div class="glass-card">
+            
+            <div class="icon-wrapper">
+                <!-- Iconiță elegantă clepsidră -->
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 22h14"></path>
+                    <path d="M5 2h14"></path>
+                    <path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"></path>
+                    <path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"></path>
+                </svg>
+            </div>
+
+            <h1>Site Suspendat Temporar</h1>
+            
+            <p>Acest site a fost suspendat temporar de către administrator până la finalizarea formalităților administrative necesare. După clarificarea situației, accesul va fi restabilit.</p>
+            
+            <a href="mailto:cmn.webdesigner@gmail.com" class="contact-btn">
+                <!-- Iconiță de mail integrată frumos -->
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect width="20" height="16" x="2" y="4" rx="2"></rect>
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                </svg>
+                Contact administrator
+            </a>
+
+        </div>
+    </div>
+
+    <!-- Script pentru particulele animate (Vanilla JS) -->
+    <script>
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let width, height;
+        let particles = [];
+
+        // Setăm dimensiunea canvas-ului
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resize);
+        resize();
+
+        // Clasa pentru fiecare particulă
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.size = Math.random() * 1.5 + 0.5; // Particule foarte mici, discrete
+                this.speedX = (Math.random() - 0.5) * 0.3; // Mișcare lentă
+                this.speedY = (Math.random() - 0.5) * 0.3;
+                this.opacity = Math.random() * 0.5 + 0.1;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                // Repunem particulele care ies din ecran
+                if (this.x < 0) this.x = width;
+                if (this.x > width) this.x = 0;
+                if (this.y < 0) this.y = height;
+                if (this.y > height) this.y = 0;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                ctx.fill();
+            }
+        }
+
+        // Inițializare particule
+        function init() {
+            particles = [];
+            // Generăm numărul de particule în funcție de lățimea ecranului
+            let particleCount = Math.floor(width / 15);
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        // Bucla de animație
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        init();
+        animate();
+    </script>
+</body>
+</html>
